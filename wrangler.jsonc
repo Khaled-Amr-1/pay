@@ -1,0 +1,40 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pay",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-06-23",
+  // "compatibility_flags": [
+  //   "nodejs_compat"
+  // ],
+  "vars": {
+    "PUBLISHABLE_KEY": "sb_publishable_-tiBU2VJiJ_FInR3R3rsRg_zS1-j79q",
+    "SUPABASE_URL": "https://ikjytcudejetjujqfllg.supabase.co",
+    "PAYMOB_PUBLIC_KEY": "egy_pk_test_0zQJoTBwkBqE8RkM9gHNTsYdm6kZTfZM"
+  },
+  // "kv_namespaces": [
+  //   {
+  //     "binding": "MY_KV_NAMESPACE",
+  //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  //   }
+  // ],
+  // "r2_buckets": [
+  //   {
+  //     "binding": "MY_BUCKET",
+  //     "bucket_name": "my-bucket"
+  //   }
+  // ],
+  // "d1_databases": [
+  //   {
+  //     "binding": "MY_DB",
+  //     "database_name": "my-database",
+  //     "database_id": ""
+  //   }
+  // ],
+  // "ai": {
+  //   "binding": "AI"
+  // },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+  },
+}
