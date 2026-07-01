@@ -104,7 +104,6 @@ app.post("/webhook", async (c) => {
     .join("");
 
   const encoder = new TextEncoder();
-  const decoder = new TextDecoder();
   const encodedData = encoder.encode(hmacString);
 
   const key = c.env.HMAC_SECRET;
@@ -123,11 +122,12 @@ app.post("/webhook", async (c) => {
     finalKey,
     encodedData,
   );
-  const finalCalculatedHmac = decoder.decode(calculatedHmac);
-  if (hmac === finalCalculatedHmac) {
-    return c.json({ message: "Mazboot" });
+  const finalHmac = new Uint8Array(calculatedHmac).toHex();
+
+  if (hmac == finalHmac) {
+    return c.json({ message: "mazboot" });
   } else {
-    throw new HTTPException(401, { message: "invalid hmac" });
+    throw new HTTPException(401, { message: "not authorized" });
   }
 });
 
