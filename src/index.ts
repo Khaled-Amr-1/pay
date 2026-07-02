@@ -13,6 +13,11 @@ app.post("/pay", auth, async (c) => {
   });
 
   const { firstName, lastName, phone, id } = await c.req.json();
+  if (!firstName || !lastName || !phone || !id) {
+    throw new HTTPException(400, {
+      message: "Missing required fields in the request body",
+    });
+  }
   const email = c.get("User").email;
   const userId = c.get("User").id;
   const billingData = { firstName, lastName, phone };
@@ -20,14 +25,15 @@ app.post("/pay", auth, async (c) => {
   const { data, error: getProductError } = await supabase
     .from("products")
     .select("price")
-    .eq("id", id);
+    .eq("id", id)
+    .single();
 
   if (getProductError) {
-    console.log(getProductError);
+    console.error(getProductError);
     throw new HTTPException(500, { message: "Internal Database Error" });
   }
 
-  const price = data[0].price;
+  const price = data.price;
 
   const intnetResponse = await fetch(
     "https://accept.paymob.com/v1/intention/",
@@ -50,6 +56,11 @@ app.post("/pay", auth, async (c) => {
       }),
     },
   );
+  if (!intnetResponse.ok) {
+    const paymobError = await intnetResponse.text();
+    console.error(paymobError);
+    throw new HTTPException(502, { message: "Paymob Currently unavailabe" });
+  }
   const { intention_order_id, client_secret } = await intnetResponse.json();
 
   const { error: insertProductError } = await supabase.from("orders").insert({
@@ -60,7 +71,7 @@ app.post("/pay", auth, async (c) => {
   });
 
   if (insertProductError) {
-    console.log(insertProductError);
+    console.error(insertProductError);
     throw new HTTPException(500, { message: "Internal Database Error" });
   }
 
@@ -145,7 +156,7 @@ app.post("/webhook", async (c) => {
       .update({ status: newOrderStatus })
       .eq("paymob_order_id", hmacData["order.id"]);
     if (error) {
-      console.log(error);
+      console.error(error);
       throw new HTTPException(500, { message: "Internal Database Error" });
     }
   } else {
