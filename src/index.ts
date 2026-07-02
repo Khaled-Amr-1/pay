@@ -73,10 +73,15 @@ app.post("/pay", auth, async (c) => {
 });
 
 app.post("/webhook", async (c) => {
+  const supabase = createClient(c.env.SUPABASE_URL, c.env.SUPABASE_SECRET_KEY, {
+    auth: {
+      persistSession: false,
+    },
+  });
   const hmac = c.req.query("hmac");
   const { obj } = await c.req.json();
   const hmacData = {
-    "obj.id": obj.id,
+    id: obj.id,
     amount_cents: obj.amount_cents,
     currency: obj.currency,
     error_occured: obj.error_occured,
@@ -91,11 +96,11 @@ app.post("/webhook", async (c) => {
     pending: obj.pending,
     success: obj.success,
     created_at: obj.created_at,
-    "source_data.pan": obj.source_data.pan,
-    "source_data.type": obj.source_data.type,
-    "source_data.sub_type": obj.source_data.sub_type,
-    integration_id: obj.payment_key_claims.integration_id,
-    "order.id": obj.order.id,
+    "source_data.pan": obj.source_data?.pan,
+    "source_data.type": obj.source_data?.type,
+    "source_data.sub_type": obj.source_data?.sub_type,
+    integration_id: obj.payment_key_claims?.integration_id,
+    "order.id": obj.order?.id,
   };
 
   const hmacString = Object.keys(hmacData)
@@ -124,8 +129,25 @@ app.post("/webhook", async (c) => {
   );
   const finalHmac = new Uint8Array(calculatedHmac).toHex();
 
-  if (hmac == finalHmac) {
-    return c.json({ message: "mazboot" });
+  if (hmac === finalHmac) {
+    let newOrderStatus = "PaymentFailed";
+
+    if (hmacData.success) {
+      newOrderStatus = "PaymentReceived";
+    } else if (hmacData.pending) {
+      newOrderStatus = "PaymentPending";
+    } else {
+      newOrderStatus = "PaymentFailed";
+    }
+
+    const { error } = await supabase
+      .from("orders")
+      .update({ status: newOrderStatus })
+      .eq("paymob_order_id", hmacData["order.id"]);
+    if (error) {
+      console.log(error);
+      throw new HTTPException(500, { message: "Internal Database Error" });
+    }
   } else {
     throw new HTTPException(401, { message: "not authorized" });
   }
