@@ -4,13 +4,19 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "lint": "eslint . --fix"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",
     "hono": "^4.12.27"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.6.0",
+    "globals": "^17.7.0",
+    "jiti": "^2.7.0",
+    "typescript-eslint": "^8.62.1",
     "wrangler": "^4.4.0"
   }
 }

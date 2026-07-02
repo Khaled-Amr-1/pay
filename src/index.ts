@@ -141,7 +141,7 @@ app.post("/webhook", async (c) => {
   const finalHmac = new Uint8Array(calculatedHmac).toHex();
 
   if (hmac === finalHmac) {
-    let newOrderStatus = "PaymentFailed";
+    let newOrderStatus: string;
 
     if (hmacData.success) {
       newOrderStatus = "PaymentReceived";
