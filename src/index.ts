@@ -120,6 +120,7 @@ app.post("/webhook", async (c) => {
     .join("");
 
   const encoder = new TextEncoder();
+
   const encodedData = encoder.encode(hmacString);
 
   const key = c.env.HMAC_SECRET;
@@ -138,7 +139,10 @@ app.post("/webhook", async (c) => {
     finalKey,
     encodedData,
   );
-  const finalHmac = new Uint8Array(calculatedHmac).toHex();
+
+  const finalHmac = Array.from(new Uint8Array(calculatedHmac))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 
   if (hmac === finalHmac) {
     let newOrderStatus: string;
