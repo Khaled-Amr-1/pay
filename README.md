@@ -1,6 +1,6 @@
 # Paymob Integration API 💳
 
-A serverless backend service built with [Hono](https://hono.dev/) and deployed on Cloudflare Workers. This service handles payment intentions via Paymob, secures webhooks using HMAC, and manages order states using Supabase.
+A serverless backend service built with [Hono](https://hono.dev/) and deployed on Cloudflare Workers. This service handles payment intentions via Paymob, secures webhooks using HMAC, and manages or[...]
 
 ## 🚀 Features
 
@@ -10,6 +10,7 @@ A serverless backend service built with [Hono](https://hono.dev/) and deployed o
 * **Database Integration:** Direct connection to Supabase for reading products and updating order statuses.
 * **Type-Safe:** Written entirely in TypeScript.
 * **Automated Testing:** High ROI integration and unit tests using Vitest.
+* **CI/CD:** GitHub Actions workflows are included to run tests and publish the project (see .github/workflows/).
 
 ## 🛠️ Tech Stack
 
@@ -144,7 +145,7 @@ npm run dev
 
 ## 🧪 Testing
 
-This project uses Vitest for integration and unit testing, focusing on high-ROI scenarios to ensure the reliability of the payment flow and webhook security without over-testing external libraries.
+This project uses Vitest for integration and unit testing, focusing on high-ROI scenarios to ensure the reliability of the payment flow and webhook security without over-testing external librarie[...]
 
 To run the test suite:
 
@@ -152,6 +153,8 @@ To run the test suite:
 npm test
 
 ```
+
+Note: A GitHub Actions workflow is included to run the test suite automatically on pushes and pull requests — check the `.github/workflows/` directory for details.
 
 ---
 
@@ -163,6 +166,8 @@ Deploy the worker to your Cloudflare account using Wrangler:
 npm run deploy
 
 ```
+
+A GitHub Actions workflow is also included to help publish or deploy the project automatically (see `.github/workflows/`).
 
 ---
 
